@@ -53,7 +53,7 @@ defmodule Network.Handler do
       "Received new message from peer #{peername}: #{inspect(message)}. Echoing it back"
     end)
 
-    :timer.sleep(5_000);
+    # :timer.sleep(5_000);
     # Sends the message back
     transport.send(socket, "#{message}\n")
 
