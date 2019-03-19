@@ -49,7 +49,7 @@ end
 release :rancho do
   set version: System.get_env("RELEASE_VERSION") || "0.1.0"
   set applications: [
-    :runtime_tools
+    :runtime_tools, :appsignal
   ]
 
   set overlay_vars: [
