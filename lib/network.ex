@@ -5,7 +5,10 @@ defmodule Network.Handler do
 
   use GenServer
 
+
+
   require Logger
+
 
   # Client
 
@@ -29,6 +32,7 @@ defmodule Network.Handler do
   def init(ref, socket, transport) do
     peername = stringify_peername(socket)
 
+
     Logger.info(fn ->
       "Peer #{peername} connecting"
     end)
@@ -36,10 +40,14 @@ defmodule Network.Handler do
     :ok = :ranch.accept_ack(ref)
     :ok = transport.setopts(socket, [{:active, true}])
 
+
+    start_time = :os.system_time(:seconds)
+
     :gen_server.enter_loop(__MODULE__, [], %{
       socket: socket,
       transport: transport,
-      peername: peername
+      peername: peername,
+      start_time: start_time
     })
   end
 
@@ -47,15 +55,21 @@ defmodule Network.Handler do
 
   def handle_info(
         {:tcp, _, message},
-        %{socket: socket, transport: transport, peername: peername} = state
+        %{socket: socket, transport: transport, peername: peername, start_time: start_time} = state
       ) do
+    IO.inspect message
+
     Logger.info(fn ->
       "Received new message from peer #{peername}: #{inspect(message)}. Echoing it back"
     end)
 
+
     # :timer.sleep(5_000);
     # Sends the message back
     transport.send(socket, "#{message}\n")
+
+
+    uptime = :os.system_time(:seconds) - start_time
 
     {:noreply, state}
   end
