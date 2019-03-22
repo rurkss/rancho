@@ -12,6 +12,8 @@ defmodule Rancho.Application do
       {Rancho.Server, config}
     ]
 
+    Metrics.Setup.setup()
+
     opts = [strategy: :one_for_one, name: Rancho.Supervisor]
     Supervisor.start_link(children, opts)
   end
