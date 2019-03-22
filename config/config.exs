@@ -32,4 +32,4 @@ use Mix.Config
 #
 #     import_config "#{Mix.env()}.exs"
 
-import_config "appsignal.exs"
+# import_config "appsignal.exs"
