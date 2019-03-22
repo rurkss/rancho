@@ -5,7 +5,6 @@ defmodule Rancho.Metric.Server do
 
   use GenServer
 
-  alias Metric.Handler
 
   require Logger
 
@@ -22,7 +21,7 @@ defmodule Rancho.Metric.Server do
   def init(port: port) do
     opts = [{:port, port}]
 
-    {:ok, pid} = :ranch.start_listener(:network, :ranch_tcp, opts, Rancho.Metric.NetworkHandler, [])
+    {:ok, pid} = :ranch.start_listener(:metrica, :ranch_tcp, opts, Rancho.Metric.NetworkHandler, [])
 
     Logger.info(fn ->
       "Listening for connections on port #{port}"
