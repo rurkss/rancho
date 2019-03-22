@@ -6,13 +6,15 @@ defmodule Rancho.Application do
   def start(_type, _args) do
     # Get configuration
     config = Application.get_env(:rancho, :server)
+    metrica = Application.get_env(:rancho, :metrica)
 
     children = [
       # Add it to supervison tree
-      {Rancho.Server, config}
+      {Rancho.Server, config},
+      {Rancho.Metric.Server, metrica}
     ]
 
-    Metrics.Setup.setup()
+    Rancho.Metric.Setup.setup()
 
     opts = [strategy: :one_for_one, name: Rancho.Supervisor]
     Supervisor.start_link(children, opts)

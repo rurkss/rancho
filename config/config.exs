@@ -22,6 +22,9 @@ use Mix.Config
 
   config :rancho, :server,
     port: String.to_integer(System.get_env("PORT") || "5555")
+
+  config :rancho, :metrica,
+    port: String.to_integer(System.get_env("PORT") || "5556")
 #
 
 # It is also possible to import configuration files, relative to this
