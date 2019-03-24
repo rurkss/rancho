@@ -24,7 +24,8 @@ defmodule Rancho.Server do
     opts = [{:port, port}]
 
     {:ok, pid} = :ranch.start_listener(:network, :ranch_tcp, opts, Handler, [])
-    :ranch.set_protocol_options(:network, [{:max_connections, max_connections}, {:num_acceptors, num_acceptors}])
+    :ranch.set_max_connections(:network, max_connections)
+    :ranch.set_protocol_options(:network, [{:num_acceptors, num_acceptors}])
 
     Logger.info(fn ->
       "Listening for connections on port #{port}"
