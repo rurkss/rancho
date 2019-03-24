@@ -21,7 +21,9 @@ use Mix.Config
   config :logger, level: :info
 
   config :rancho, :server,
-    port: String.to_integer(System.get_env("PORT") || "5555")
+    port: String.to_integer(System.get_env("PORT") || "5555"),
+    max_connections: 2,
+    num_acceptors: 10
 
   config :rancho, :metrica,
     port: String.to_integer(System.get_env("PORT") || "5556")

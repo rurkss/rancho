@@ -4,7 +4,7 @@ defmodule Network.Handler do
   """
 
   use GenServer
-
+  use Prometheus.Metric
 
 
   require Logger
@@ -32,6 +32,7 @@ defmodule Network.Handler do
   def init(ref, socket, transport) do
     peername = stringify_peername(socket)
 
+    Gauge.inc([name: :connection_pool_size])
 
     Logger.info(fn ->
       "Peer #{peername} connecting"
@@ -57,7 +58,6 @@ defmodule Network.Handler do
         {:tcp, _, message},
         %{socket: socket, transport: transport, peername: peername, start_time: start_time} = state
       ) do
-    IO.inspect message
 
     Logger.info(fn ->
       "Received new message from peer #{peername}: #{inspect(message)}. Echoing it back"
@@ -79,6 +79,7 @@ defmodule Network.Handler do
       "Peer #{peername} disconnected"
     end)
 
+    Gauge.dec([name: :connection_pool_size])
     {:stop, :normal, state}
   end
 
@@ -87,6 +88,7 @@ defmodule Network.Handler do
       "Error with peer #{peername}: #{inspect(reason)}"
     end)
 
+    Gauge.dec([name: :connection_pool_size])
     {:stop, :normal, state}
   end
 

@@ -19,10 +19,12 @@ defmodule Rancho.Server do
   @doc """
   Initiates the listener (pool of acceptors).
   """
-  def init(port: port) do
+  def init(port: port, max_connections: max_connections, num_acceptors: num_acceptors) do
+
     opts = [{:port, port}]
 
     {:ok, pid} = :ranch.start_listener(:network, :ranch_tcp, opts, Handler, [])
+    :ranch.set_protocol_options(:network, [{:max_connections, max_connections}, {:num_acceptors, num_acceptors}])
 
     Logger.info(fn ->
       "Listening for connections on port #{port}"
