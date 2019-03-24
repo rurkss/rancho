@@ -64,7 +64,7 @@ defmodule Network.Handler do
     end)
 
 
-    :timer.sleep(10_000);
+    # :timer.sleep(10_000);
     # Sends the message back
     transport.send(socket, "#{message}\n")
 
