@@ -60,7 +60,8 @@ defmodule Network.Handler do
       ) do
 
     Logger.info(fn ->
-      "Received new message from peer #{peername}: #{inspect(message)}. Echoing it back"
+      IO.inspect :ranch.info()
+      # "Received new message from peer #{peername}: #{inspect(message)}. Echoing it back"
     end)
 
 
