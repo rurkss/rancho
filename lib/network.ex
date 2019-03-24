@@ -59,10 +59,10 @@ defmodule Network.Handler do
         %{socket: socket, transport: transport, peername: peername, start_time: start_time} = state
       ) do
 
-    Logger.info(fn ->
+    # Logger.info(fn ->
       IO.inspect :ranch.info()
       # "Received new message from peer #{peername}: #{inspect(message)}. Echoing it back"
-    end)
+    # end)
 
 
     # :timer.sleep(10_000);
