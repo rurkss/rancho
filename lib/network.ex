@@ -60,11 +60,26 @@ defmodule Network.Handler do
       ) do
 
     # Logger.info(fn ->
-      IO.inspect :ranch.info()
+      [
+        {Rancho.Router.HTTP, _data},
+        {:network, [
+          pid: pid,
+          status: status,
+          ip: ip,
+          port: port,
+          max_connections: m_c,
+          active_connections: a_c,
+          all_connections: al_c,
+          transport: trs,
+          transport_options: t_o,
+          protocol: p,
+          protocol_options: p_o
+        ]}
+      ] = :ranch.info()
       # "Received new message from peer #{peername}: #{inspect(message)}. Echoing it back"
     # end)
 
-
+    IO.puts a_c
     # :timer.sleep(10_000);
     # Sends the message back
     transport.send(socket, "#{message}\n")
