@@ -59,7 +59,7 @@ defmodule Network.Handler do
         %{socket: socket, transport: transport, peername: peername, start_time: start_time} = state
       ) do
 
-    # Logger.info(fn ->
+    Logger.info(fn ->
       # [
       #   {Rancho.Router.HTTP, _data},
       #   {:network, [
@@ -76,8 +76,8 @@ defmodule Network.Handler do
       #     protocol_options: p_o
       #   ]}
       # ] = :ranch.info()
-      # "Received new message from peer #{peername}: #{inspect(message)}. Echoing it back"
-    # end)
+      "Received new message from peer #{peername}: #{inspect(message)}. Echoing it back"
+    end)
 
     # IO.puts a_c
     # :timer.sleep(10_000);
