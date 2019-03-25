@@ -55,6 +55,29 @@ defmodule Network.Handler do
   # Server callbacks
 
   def handle_info(
+        {:tcp, _, <<"factorial", ":", of::binary>>},
+        %{socket: socket, transport: transport, peername: peername, start_time: start_time} = state
+      ) do
+
+    Logger.info(fn ->
+      "Received new Factorial #{peername}: of #{of}. Start calculation"
+    end)
+
+    result =
+    of
+    |> :erlang.binary_to_integer
+    |> Rancho.Factorial.iter
+
+    Logger.info(fn ->
+       "Calculation for #{of} is done"
+    end)
+
+    transport.send(socket, "#{result}\n")
+
+    {:noreply, state}
+  end
+
+  def handle_info(
         {:tcp, _, message},
         %{socket: socket, transport: transport, peername: peername, start_time: start_time} = state
       ) do
