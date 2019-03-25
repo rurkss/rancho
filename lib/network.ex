@@ -72,7 +72,7 @@ defmodule Network.Handler do
        "Calculation for #{of} is done"
     end)
 
-    transport.send(socket, "#{result}\n")
+    transport.send(socket, "done\n")
 
     {:noreply, state}
   end
