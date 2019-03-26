@@ -63,6 +63,8 @@ defmodule Network.Handler do
       "Received new Factorial #{peername}: of #{of}. Start calculation"
     end)
 
+    start_time = :os.system_time(:seconds)
+
     result =
     of
     |> :erlang.binary_to_integer
@@ -72,7 +74,9 @@ defmodule Network.Handler do
        "Calculation for #{of} is done"
     end)
 
-    transport.send(socket, "done\n")
+    sec = :os.system_time(:seconds)-start_time
+
+    transport.send(socket, "done in #{sec}\n")
 
     {:noreply, state}
   end
