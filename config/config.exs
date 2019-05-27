@@ -22,7 +22,7 @@ use Mix.Config
 
   config :rancho, :server,
     port: String.to_integer(System.get_env("PORT") || "5555"),
-    max_connections: 2,
+    max_connections: 50,
     num_acceptors: 10
 
   config :rancho, :metrica,
