@@ -9,7 +9,7 @@ defmodule Network.Handler do
 
   require Logger
 
-
+  alias Rancho.Stable
   # Client
 
   @doc """
@@ -41,6 +41,7 @@ defmodule Network.Handler do
     :ok = :ranch.accept_ack(ref)
     :ok = transport.setopts(socket, [{:active, true}])
 
+    Stable.put(peername, socket, transport)
 
     start_time = :os.system_time(:seconds)
 
@@ -106,13 +107,7 @@ defmodule Network.Handler do
       "Received new message from peer #{peername}: #{inspect(message)}. Echoing it back"
     end)
 
-    # IO.puts a_c
-    # :timer.sleep(10_000);
-    # Sends the message back
-    transport.send(socket, "#{message}\n")
-
-
-    uptime = :os.system_time(:seconds) - start_time
+    # Stable.spread(message)
 
     {:noreply, state}
   end
@@ -123,6 +118,8 @@ defmodule Network.Handler do
     end)
 
     Gauge.dec([name: :connection_pool_checked_out])
+    Stable.pop(peername)
+
     {:stop, :normal, state}
   end
 
@@ -132,6 +129,8 @@ defmodule Network.Handler do
     end)
 
     Gauge.dec([name: :connection_pool_checked_out])
+    Stable.pop(peername)
+
     {:stop, :normal, state}
   end
 
