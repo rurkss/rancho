@@ -11,7 +11,9 @@ defmodule Rancho.Application do
     children = [
       # Add it to supervison tree
       {Rancho.Server, config},
-      Plug.Adapters.Cowboy.child_spec(scheme: :http, plug: Rancho.Router, options: [port: 5556])
+      Rancho.Stable,
+      Plug.Adapters.Cowboy.child_spec(scheme: :http, plug: Rancho.Router, options: [port: 5556]),
+      Rancho.Redis
     ]
 
     Rancho.Metric.Setup.setup()

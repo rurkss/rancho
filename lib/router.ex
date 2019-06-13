@@ -12,7 +12,7 @@ defmodule Rancho.Router do
 
 
   get "/metrics" do
-      send_resp(conn, 200, Prometheus.Format.Text.format())
+    send_resp(conn, 200, Prometheus.Format.Text.format())
   end
 
   match _ do

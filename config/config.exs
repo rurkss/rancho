@@ -27,6 +27,7 @@ use Mix.Config
 
   config :rancho, :metrica,
     port: String.to_integer(System.get_env("PORT") || "5556")
+
 #
 
 # It is also possible to import configuration files, relative to this
@@ -35,6 +36,6 @@ use Mix.Config
 # Configuration from the imported file will override the ones defined
 # here (which is why it is important to import them last).
 #
-#     import_config "#{Mix.env()}.exs"
+import_config "#{Mix.env()}.exs"
 
 # import_config "appsignal.exs"
