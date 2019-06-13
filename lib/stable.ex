@@ -36,7 +36,7 @@ defmodule Rancho.Stable do
 
     spreads_to = :ets.foldl(fn({peername, {socket, transport}}, acc) ->
 
-      case transport.send(socket, message) do
+      case transport.send(socket, key <> "start" <> message <> "end") do
         {:error, :closed} -> __MODULE__.pop(peername)
         _-> [peername | acc]
       end
