@@ -20,9 +20,14 @@ defmodule Rancho.Stable do
 
   def handle_cast({:put, {peername, data}}, cache_ref) do
 
-    :ets.insert(@stable, {peername, data})
+    {d, z} = :calendar.local_time()
+    {y, mo, d} = d
+    {h, m, s} = z
+
+    :ets.insert(@stable, {peername, data, "#{y}-#{mo}-#{d} #{h}:#{m}:#{s}"})
 
     case :ets.lookup(@stable, peername) do
+      [{^peername, {socket, transport, dt}}] -> populate_peer(socket, transport, cache_ref)
       [{^peername, {socket, transport}}] -> populate_peer(socket, transport, cache_ref)
       _ -> :ok
     end
@@ -32,7 +37,11 @@ defmodule Rancho.Stable do
 
   def handle_call({:spread, key, message}, _from, cache_table) do
 
-    :dets.insert(cache_table, {key, message})
+    {d, z} = :calendar.local_time()
+    {y, mo, d} = d
+    {h, m, s} = z
+
+    :dets.insert(cache_table, {key, message, "#{y}-#{mo}-#{d} #{h}:#{m}:#{s}"})
 
     spreads_to = :ets.foldl(fn({peername, {socket, transport}}, acc) ->
 
@@ -48,17 +57,32 @@ defmodule Rancho.Stable do
 
   def handle_call(:scan_connections, _from, state) do
 
-    keys = :ets.foldl(fn({key, obj}, acc) ->
-      [key | acc]
+    keys = :ets.foldl(fn(datas, acc) ->
+
+      case datas do
+        {key, obj} -> [[key, "", ""] | acc]
+        {key, obj, dt} -> [[key, dt, get_idle(dt)] | acc]
+      end
+
     end, [], @stable)
 
     {:reply, keys, state}
   end
 
+  def handle_call(:info, _from, cache_table) do
+    data = :dets.info(cache_table)
+    {:reply, data, cache_table}
+  end
+
   def handle_call(:read, _from, cache_table) do
 
-    keys = :dets.foldl(fn({key, obj}, acc) ->
-      [key | acc]
+    keys = :dets.foldl(fn(datas, acc) ->
+
+      case datas do
+        {key, obj} -> acc
+        {key, obj, dt} -> [[key, dt] | acc]
+      end
+
     end, [], cache_table)
 
     # peername = "_development__interline_validate_classes_3_0"
@@ -73,14 +97,46 @@ defmodule Rancho.Stable do
 
   def populate_peer(socket, transport, cache_ref) do
 
-    data = :dets.foldl(fn({key, message}, acc) ->
-      key <> "start" <> message <> "end" <> acc
+    data = :dets.foldl(fn(data, acc) ->
+
+      case data do
+        {key, message} -> key <> "start" <> message <> "end" <> acc
+        {key, message, dt} -> key <> "start" <> message <> "end" <> acc
+      end
+
+
     end, "", cache_ref)
 
     transport.send(socket, data)
   end
 
   ######################## API ##############################
+
+  def get_idle(started) do
+
+    [dt, tm] = String.split(started, " ")
+    [y, mo, d] = String.split(dt, "-")
+    [h, m, s] = String.split(tm, ":")
+
+    data = {
+      {
+        String.to_integer(y),
+        String.to_integer(mo),
+        String.to_integer(d)
+      },
+      {
+        String.to_integer(h),
+        String.to_integer(m),
+        String.to_integer(s)
+      }
+    }
+
+    t_now = NaiveDateTime.from_erl!(:calendar.local_time())
+    t_start = NaiveDateTime.from_erl!(data)
+
+    mins = NaiveDateTime.diff(t_now, t_start) / 60
+    mins
+  end
 
   def spread(key, message) do
     __MODULE__
@@ -110,5 +166,17 @@ defmodule Rancho.Stable do
   def read() do
     Rancho.Stable
       |> GenServer.call(:read)
+  end
+
+  def info() do
+
+    [type: tp, keypos: kp, size: sz, file_size: fs, filename: fname] = Rancho.Stable
+      |> GenServer.call(:info)
+
+    %{
+      keys: sz,
+      file_size: fs/1000000,
+      connections: Rancho.Stable.scan_connections()
+    }
   end
 end

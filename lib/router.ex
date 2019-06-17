@@ -15,6 +15,10 @@ defmodule Rancho.Router do
     send_resp(conn, 200, Prometheus.Format.Text.format())
   end
 
+  get "/data" do
+    send_resp(conn, 200, Rancho.Metric.Stata.generate_info())
+  end
+
   match _ do
 
   send_resp(conn, 404, "not found")

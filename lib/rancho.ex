@@ -23,6 +23,9 @@ defmodule Rancho.Server do
 
     opts = [{:port, port}]
 
+    IO.puts "inspect opts"
+    IO.inspect opts
+
     {:ok, pid} = :ranch.start_listener(:network, :ranch_tcp, opts, Handler, [])
     :ranch.set_max_connections(:network, max_connections)
     :ranch.set_protocol_options(:network, [{:num_acceptors, num_acceptors}])
