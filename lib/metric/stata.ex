@@ -20,7 +20,13 @@ defmodule Rancho.Metric.Stata do
 
     Rancho.Stable.spread(key, value)
 
-    Rancho.Stable.scan_connections()
+
+
+    # Rancho.Stable.scan_connections()
+
+    [
+      ["94.130.20.168:36790", "2019-6-25 9:10:1", 2.3]
+    ]
     |> Enum.map(&ping_key(&1, key, value))
   end
 
