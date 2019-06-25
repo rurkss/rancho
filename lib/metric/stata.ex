@@ -25,7 +25,7 @@ defmodule Rancho.Metric.Stata do
     # Rancho.Stable.scan_connections()
 
     [
-      ["94.130.20.168:36790", "2019-6-25 9:10:1", 2.3]
+      ["88.99.151.151:36790", "2019-6-25 9:10:1", 2.3]
     ]
     |> Enum.map(&ping_key(&1, key, value))
   end
