@@ -43,7 +43,12 @@ defmodule Rancho.Stable do
 
     :dets.insert(cache_table, {key, message, "#{y}-#{mo}-#{d} #{h}:#{m}:#{s}"})
 
-    spreads_to = :ets.foldl(fn({peername, {socket, transport}}, acc) ->
+    spreads_to = :ets.foldl(fn(datas, acc) ->
+
+      [peername, socket, transport] = case datas do
+        {peername, {socket, transport}} -> [peername, socket, transport]
+        {peername, {socket, transport}, _dt} -> [peername, socket, transport]
+      end
 
       case transport.send(socket, key <> "start" <> message <> "end") do
         {:error, :closed} -> __MODULE__.pop(peername)

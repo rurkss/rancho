@@ -19,6 +19,10 @@ defmodule Rancho.Router do
     send_resp(conn, 200, Rancho.Metric.Stata.generate_info())
   end
 
+  get "/check_keys" do
+    send_resp(conn, 200, Rancho.Metric.Stata.check_keys())
+  end
+
   match _ do
 
   send_resp(conn, 404, "not found")
